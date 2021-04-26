@@ -34,6 +34,7 @@ class DefaultSteps:  # pylint: disable=too-few-public-methods
     RUNTIME_VULNERABILITY_SCAN = 'runtime-vulnerability-scan'
     CANARY_TEST = 'canary-test'
     PUBLISH_WORKFLOW_RESULTS = 'publish-workflow-results'
+    GENERATE_AND_PUBLISH_WORKFLOW_REPORT = 'generate-and-publish-workflow-report'
 
 
 class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes

@@ -1,22 +1,4 @@
-"""`StepImplementer` for the `generate-metadata` step using Git.
-Step Configuration
-------------------
-Step configuration expected as input to this step.
-Could come from:
-  * static configuration
-  * runtime configuration
-  * previous step results
-Configuration Key     | Required? | Default | Description
-----------------------|-----------|---------|-----------
-TODO
-
-Result Artifacts
-----------------
-Results artifacts output by this step.
-Result Artifact Key | Description
---------------------|------------
-TODO
-
+"""`StepImplementer` for the `generate-and-publish-workflow-report` step using Git.
 """
 
 
