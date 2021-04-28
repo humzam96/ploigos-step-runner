@@ -215,14 +215,9 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-        files_to_list = []
-        value_to_list = []
         for filename in artifact_parent_dir_full_path:
-            files_to_list.append(filename)
-            for value in artifact_extensions:
-                value_to_list.append(value)
-                if filename.endswith(str(value)):
-                    artifact_file_names.append(filename)
+            if any(filename.endswith(str(ext.value)) for ext in artifact_extensions):
+                artifact_file_names.append(filename)
 
         # error if we find more then one artifact
         # see https://projects.engineering.redhat.com/browse/NAPSSPO-546
@@ -235,9 +230,7 @@ class Maven(MavenGeneric):
         if len(artifact_file_names) < 1:
             step_result.success = False
             step_result.message = 'pom resulted in 0 with expected artifact extensions ' \
-                                  f'({artifact_extensions}), this is unsupported' \
-                                  f'({files_to_list}' \
-                                  f'({value_to_list})'
+                                  f'({artifact_extensions}), this is unsupported'
             return step_result
 
         artifact_id = get_xml_element(pom_file, 'artifactId').text
