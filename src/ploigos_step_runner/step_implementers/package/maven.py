@@ -216,7 +216,7 @@ class Maven(MavenGeneric):
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
         for filename in artifact_parent_dir_full_path:
-            if any(filename.endswith(ext) for ext in artifact_extensions):
+            if any(filename.endswith(str(ext)) for ext in artifact_extensions):
                 artifact_file_names.append(filename)
 
         # error if we find more then one artifact
