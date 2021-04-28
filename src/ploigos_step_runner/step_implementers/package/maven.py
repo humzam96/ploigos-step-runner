@@ -216,9 +216,11 @@ class Maven(MavenGeneric):
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
         files_to_list = []
+        value_to_list = []
         for filename in artifact_parent_dir_full_path:
             files_to_list.append(filename)
             for value in artifact_extensions:
+                value_to_list.append(value)
                 if filename.endswith(str(value)):
                     artifact_file_names.append(filename)
 
@@ -234,7 +236,8 @@ class Maven(MavenGeneric):
             step_result.success = False
             step_result.message = 'pom resulted in 0 with expected artifact extensions ' \
                                   f'({artifact_extensions}), this is unsupported' \
-                                  f'({files_to_list}'
+                                  f'({files_to_list}' \
+                                  f'({value_to_list})'
             return step_result
 
         artifact_id = get_xml_element(pom_file, 'artifactId').text
