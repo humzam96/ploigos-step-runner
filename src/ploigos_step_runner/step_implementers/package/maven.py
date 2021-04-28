@@ -215,48 +215,53 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-        for filename in artifact_parent_dir_full_path:
-            if any(filename.endswith(str(ext.value)) for ext in artifact_extensions):
-                artifact_file_names.append(filename)
-
-        # error if we find more then one artifact
-        # see https://projects.engineering.redhat.com/browse/NAPSSPO-546
-        if len(artifact_file_names) > 1:
-            step_result.success = False
-            step_result.message = 'pom resulted in multiple artifacts with expected artifact ' \
-                                  f'extensions ({artifact_extensions}), this is unsupported'
-            return step_result
-
-        if len(artifact_file_names) < 1:
-            step_result.success = False
-            step_result.message = 'pom resulted in 0 with expected artifact extensions ' \
-                                  f'({artifact_extensions}), this is unsupported'
-            return step_result
-
-        artifact_id = get_xml_element(pom_file, 'artifactId').text
-        group_id = get_xml_element(pom_file, 'groupId').text
-        try:
-            package_type = get_xml_element(pom_file, 'package').text
-        except ValueError:
-            package_type = 'jar'
-
-        package_artifacts = {
-            'path': os.path.join(
-                    os.path.dirname(os.path.abspath(pom_file)),
-                    artifact_parent_dir,
-                    artifact_file_names[0]
-            ),
-            'artifact-id': artifact_id,
-            'group-id': group_id,
-            'package-type': package_type,
-            'pom-path': pom_file
-        }
-
-        # Currently, package returns ONE 'artifact', eg: one war file
-        # However, in the future, an ARRAY could be returned, eg: several jar files
-        step_result.add_artifact(
-           name='package-artifacts',
-           value=[package_artifacts]
-        )
-
+        step_result.success = False
+        step_result.message = 'Here is the artifact_extensions:\n ' \
+                              f'({artifact_extensions})'
         return step_result
+
+        # for filename in artifact_parent_dir_full_path:
+        #     if any(filename.endswith(str(ext.value)) for ext in artifact_extensions):
+        #         artifact_file_names.append(filename)
+        #
+        # # error if we find more then one artifact
+        # # see https://projects.engineering.redhat.com/browse/NAPSSPO-546
+        # if len(artifact_file_names) > 1:
+        #     step_result.success = False
+        #     step_result.message = 'pom resulted in multiple artifacts with expected artifact ' \
+        #                           f'extensions ({artifact_extensions}), this is unsupported'
+        #     return step_result
+        #
+        # if len(artifact_file_names) < 1:
+        #     step_result.success = False
+        #     step_result.message = 'pom resulted in 0 with expected artifact extensions ' \
+        #                           f'({artifact_extensions}), this is unsupported'
+        #     return step_result
+        #
+        # artifact_id = get_xml_element(pom_file, 'artifactId').text
+        # group_id = get_xml_element(pom_file, 'groupId').text
+        # try:
+        #     package_type = get_xml_element(pom_file, 'package').text
+        # except ValueError:
+        #     package_type = 'jar'
+        #
+        # package_artifacts = {
+        #     'path': os.path.join(
+        #             os.path.dirname(os.path.abspath(pom_file)),
+        #             artifact_parent_dir,
+        #             artifact_file_names[0]
+        #     ),
+        #     'artifact-id': artifact_id,
+        #     'group-id': group_id,
+        #     'package-type': package_type,
+        #     'pom-path': pom_file
+        # }
+        #
+        # # Currently, package returns ONE 'artifact', eg: one war file
+        # # However, in the future, an ARRAY could be returned, eg: several jar files
+        # step_result.add_artifact(
+        #    name='package-artifacts',
+        #    value=[package_artifacts]
+        # )
+        #
+        # return step_result
