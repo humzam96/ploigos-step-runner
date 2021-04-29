@@ -216,7 +216,7 @@ class Maven(MavenGeneric):
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
         all_files = []
-        first_ext = artifact_extensions.index(0)
+        first_ext = artifact_extensions[0]
         for filename in artifact_parent_dir_full_path:
             all_files.append(filename)
             for ext in artifact_extensions:
