@@ -225,7 +225,8 @@ class Maven(MavenGeneric):
         if len(artifact_file_names) > 1:
             step_result.success = False
             step_result.message = 'pom resulted in multiple artifacts with expected artifact ' \
-                                  f'extensions ({artifact_extensions}), this is unsupported'
+                                  f'extensions ({artifact_extensions}), this is unsupported' \
+                                  f'matched files: ({artifact_file_names})'
             return step_result
 
         if len(artifact_file_names) < 1:
