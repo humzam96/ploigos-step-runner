@@ -218,8 +218,9 @@ class Maven(MavenGeneric):
         all_files = []
         for filename in artifact_parent_dir_full_path:
             all_files.append(filename)
-            if any(filename.endswith(ext) for ext in artifact_extensions):
-                artifact_file_names.append(filename)
+            for ext in artifact_extensions:
+                if filename.endswith(ext):
+                    artifact_file_names.append(filename)
 
         # error if we find more then one artifact
         # see https://projects.engineering.redhat.com/browse/NAPSSPO-546
