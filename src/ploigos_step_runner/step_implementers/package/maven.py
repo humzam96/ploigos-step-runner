@@ -215,8 +215,9 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-
+        all_files = []
         for filename in artifact_parent_dir_full_path:
+            all_files.append(filename)
             if any(filename.endswith(ext) for ext in artifact_extensions):
                 artifact_file_names.append(filename)
 
@@ -226,7 +227,8 @@ class Maven(MavenGeneric):
             step_result.success = False
             step_result.message = 'pom resulted in multiple artifacts with expected artifact ' \
                                   f'extensions ({artifact_extensions}), this is unsupported' \
-                                  f'matched files: ({artifact_file_names})'
+                                  f'matched files: ({artifact_file_names})' \
+                                  f'all files: ({all_files})'
             return step_result
 
         if len(artifact_file_names) < 1:
