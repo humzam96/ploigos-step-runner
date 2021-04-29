@@ -215,13 +215,11 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-        all_files = []
-        first_ext = artifact_extensions[1]
+
         for filename in artifact_parent_dir_full_path:
-            all_files.append(filename)
             for ext in artifact_extensions:
-                print(ext)
-                if filename.endswith(ext):
+                print (ext)
+                if any(filename.endswith(ext)):
                     artifact_file_names.append(filename)
 
         # error if we find more then one artifact
@@ -229,10 +227,7 @@ class Maven(MavenGeneric):
         if len(artifact_file_names) > 1:
             step_result.success = False
             step_result.message = 'pom resulted in multiple artifacts with expected artifact ' \
-                                  f'extensions ({artifact_extensions}), this is unsupported' \
-                                  f'\nmatched files: ({artifact_file_names})' \
-                                  f'\nall files: ({all_files})' \
-                                  f'\nfirst_ext: {first_ext}'
+                                  f'extensions ({artifact_extensions}), this is unsupported'
             return step_result
 
         if len(artifact_file_names) < 1:
