@@ -239,7 +239,7 @@ class ArgoCD(StepImplementer):
         deployment_config_repo_branch = ArgoCD.__get_repo_branch()
         deployment_config_helm_chart_path = self.get_value('deployment-config-helm-chart-path')
         print("Chart path: " +deployment_config_helm_chart_path)
-        print ("\nChart var type: "+type(deployment_config_helm_chart_path))
+        print ("\nChart var type: "+str(type(deployment_config_helm_chart_path)))
         deployment_config_destination_cluster_uri = self.get_value('kube-api-uri')
         deployment_config_destination_cluster_token = self.get_value('kube-api-token')
         deployment_config_helm_chart_environment_values_file = \
@@ -249,7 +249,7 @@ class ArgoCD(StepImplementer):
         deployment_config_helm_chart_additional_value_files = \
             self.get_value('deployment-config-helm-chart-additional-values-files')
         print("Deployment stuff: " +'\n'.join(map(str, deployment_config_helm_chart_additional_value_files)))
-        print ("\nDeployment var type: "+type(deployment_config_helm_chart_additional_value_files))
+        print ("\nDeployment var type: "+str(type(deployment_config_helm_chart_additional_value_files)))
         container_image_tag = self.get_value('container-image-tag')
         force_push_tags = self.get_value('force-push-tags')
 

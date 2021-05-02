@@ -217,10 +217,10 @@ class Maven(MavenGeneric):
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
         print("artifact_extensions: " + '\n'.join(map(str, artifact_extensions)))
-        print("Type artifact_extensions: "+type(artifact_extensions))
+        print("Type artifact_extensions: "+str(type(artifact_extensions)))
         print("\n------------")
         print("artifact_parent_dir: " + artifact_parent_dir)
-        print("artifact_parent_dir type: " + type(artifact_parent_dir))
+        print("artifact_parent_dir type: " + str(type(artifact_parent_dir)))
         print("\n------------")
         for filename in artifact_parent_dir_full_path:
             for ext in artifact_extensions:
