@@ -97,6 +97,7 @@ from ploigos_step_runner import StepResult
 from ploigos_step_runner.step_implementers.shared.maven_generic import MavenGeneric
 from ploigos_step_runner.utils.io import create_sh_redirect_to_multiple_streams_fn_callback
 from ploigos_step_runner.utils.xml import get_xml_element
+from ploigos_step_runner.config.config_value import ConfigValue
 
 DEFAULT_CONFIG = {
     'tls-verify': True,
@@ -215,10 +216,18 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-
+        print("artifact_extensions: "+artifact_extensions)
+        print("Type artifact_extensions: "+type(artifact_extensions))
+        print("\n------------")
+        print("artifact_parent_dir: " + artifact_parent_dir)
+        print("artifact_parent_dir type: " + type(artifact_parent_dir))
+        print("\n------------")
         for filename in artifact_parent_dir_full_path:
             for ext in artifact_extensions:
                 print (ext)
+                if isinstance(ext,ConfigValue):
+                    ext = ext.value
+                print(ext)
                 if any(filename.endswith(ext)):
                     artifact_file_names.append(filename)
 
