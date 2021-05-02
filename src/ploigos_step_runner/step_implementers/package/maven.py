@@ -216,19 +216,8 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-        print("artifact_extensions: " + '\n'.join(map(str, artifact_extensions)))
-        print("Type artifact_extensions: "+str(type(artifact_extensions)))
-        print("\n------------")
-        print("artifact_parent_dir: " + artifact_parent_dir)
-        print("artifact_parent_dir type: " + str(type(artifact_parent_dir)))
-        print("\n------------")
         for filename in artifact_parent_dir_full_path:
-            for ext in artifact_extensions:
-                print (ext)
-                if isinstance(ext,ConfigValue):
-                    ext = ext.value
-                print(ext)
-                if filename.endswith(ext):
+            if any(filename.endswith(ext) for ext in artifact_extensions):
                     artifact_file_names.append(filename)
 
         # error if we find more then one artifact
