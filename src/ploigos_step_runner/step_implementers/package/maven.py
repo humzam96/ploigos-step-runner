@@ -228,7 +228,7 @@ class Maven(MavenGeneric):
                 if isinstance(ext,ConfigValue):
                     ext = ext.value
                 print(ext)
-                if any(filename.endswith(ext)):
+                if filename.endswith(ext):
                     artifact_file_names.append(filename)
 
         # error if we find more then one artifact
