@@ -248,7 +248,7 @@ class ArgoCD(StepImplementer):
             self.get_value('deployment-config-helm-chart-values-file-image-tag-yq-path')
         deployment_config_helm_chart_additional_value_files = \
             self.get_value('deployment-config-helm-chart-additional-values-files')
-        print("Deployment stuff: " +deployment_config_helm_chart_additional_value_files)
+        print("Deployment stuff: " +'\n'.join(map(str, deployment_config_helm_chart_additional_value_files)))
         print ("\nDeployment var type: "+type(deployment_config_helm_chart_additional_value_files))
         container_image_tag = self.get_value('container-image-tag')
         force_push_tags = self.get_value('force-push-tags')

@@ -216,7 +216,7 @@ class Maven(MavenGeneric):
             os.listdir(os.path.join(
                 os.path.dirname(os.path.abspath(pom_file)),
                 artifact_parent_dir))
-        print("artifact_extensions: "+artifact_extensions)
+        print("artifact_extensions: " + '\n'.join(map(str, artifact_extensions)))
         print("Type artifact_extensions: "+type(artifact_extensions))
         print("\n------------")
         print("artifact_parent_dir: " + artifact_parent_dir)
