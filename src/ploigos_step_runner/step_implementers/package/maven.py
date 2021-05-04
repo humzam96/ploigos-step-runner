@@ -206,7 +206,7 @@ class Maven(MavenGeneric):
             out_callback = create_sh_redirect_to_multiple_streams_fn_callback([
                 sys.stdout])
             tar = subprocess.run(['tar', '-cf', 'maven.tar','target'], stdout=subprocess.PIPE)
-            gpg= subprocess.run(['gpg'
+            gpg= subprocess.run(['gpg',
                 '--output',
                 'mysignature.asc',
                 '--detach-sign',
