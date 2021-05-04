@@ -207,12 +207,12 @@ class Maven(MavenGeneric):
                 sys.stdout])
             tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
             tar = subprocess.run(['tar', '-cf', tar_file, mvn_output_file_path],
-                                 check=True, stdout=subprocess.PIPE, universal_newlines=True)
+                                  stdout=subprocess.PIPE, universal_newlines=True)
             gpg= subprocess.run(['gpg',
                 '--output',
                 'mysignature.asc',
                 '--detach-sign',
-                tar_file], check=True, stdout=subprocess.PIPE, universal_newlines=True
+                tar_file], stdout=subprocess.PIPE, universal_newlines=True
             )
             rekor = subprocess.run(['rekor',
                 'upload',
@@ -223,7 +223,7 @@ class Maven(MavenGeneric):
                 '--public-key',
                 '/var/pgp-private-keys/gpg_private_key',
                 '--artifact',
-                tar_file], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+                tar_file], stdout=subprocess.PIPE, universal_newlines=True)
             # print(tar.stdout)
             # print(tar.stderr)
             print(gpg.stdout)
