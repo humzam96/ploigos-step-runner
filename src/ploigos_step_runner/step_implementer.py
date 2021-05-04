@@ -650,13 +650,14 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         else:
             with open(file_path, 'wb') as file:
                 file.write(contents)
+            out_callback = create_sh_redirect_to_multiple_streams_fn_callback([
+                sys.stdout])
             sh.gpg(
                 '--output',
                 os.path.join(self.work_dir_path_step, 'mysignature.asc'),
                 '--detach-sign',
                 file_path,
-                _out=out_callback,
-                _err=err_callback
+                _out=out_callback
             )
             sh.rekor(
                 'upload',
@@ -668,8 +669,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                 '/var/pgp-private-keys/gpg_private_key',
                 '--artifact',
                 file_path,
-                _out=out_callback,
-                _err=err_callback
+                _out=out_callback
             )
 
         return file_path
