@@ -91,7 +91,7 @@ Examples
 """
 import os
 import sys
-
+import subprocess
 import sh
 from ploigos_step_runner import StepResult
 from ploigos_step_runner.step_implementers.shared.maven_generic import MavenGeneric
@@ -212,7 +212,7 @@ class Maven(MavenGeneric):
                 mvn_output_file_path,
                 _out=out_callback
             )
-            sh.rekor(
+            rekor = subprocess.run([
                 'upload',
                 '--rekor_server',
                 'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
@@ -221,9 +221,8 @@ class Maven(MavenGeneric):
                 '--public-key',
                 '/var/pgp-private-keys/gpg_private_key',
                 '--artifact',
-                mvn_output_file_path,
-                _out=out_callback
-            )
+                mvn_output_file_path], stdout=subprocess.PIPE)
+            print(rekor.stdout)
             step_result.add_artifact(
                 description="Standard out and standard error from 'mvn install'.",
                 name='maven-output',
