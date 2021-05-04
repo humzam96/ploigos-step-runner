@@ -205,12 +205,12 @@ class Maven(MavenGeneric):
         finally:
             out_callback = create_sh_redirect_to_multiple_streams_fn_callback([
                 sys.stdout])
-            tar = subprocess.run(['tar', '-cf', 'maven.tar','target'], stdout=subprocess.PIPE)
+            tar = subprocess.run(['tar', '-cf', 'maven.tar','target'], capture_output=True)
             gpg= subprocess.run(['gpg',
                 '--output',
                 'mysignature.asc',
                 '--detach-sign',
-                'maven.tar'], stdout=subprocess.PIPE
+                'maven.tar'], capture_output=True
             )
             rekor = subprocess.run(['rekor',
                 'upload',
@@ -221,10 +221,13 @@ class Maven(MavenGeneric):
                 '--public-key',
                 '/var/pgp-private-keys/gpg_private_key',
                 '--artifact',
-                'maven.tar'], stdout=subprocess.PIPE)
+                'maven.tar'], capture_output=True)
             print(tar.stdout)
+            print(tar.stderr)
             print(gpg.stdout)
-            print(rekor.stdout)
+            print(gpg.stderr)
+            print(gpg.stdout)
+            print(gpg.stderr)
             step_result.add_artifact(
                 description="Standard out and standard error from 'mvn install'.",
                 name='maven-output',
