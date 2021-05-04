@@ -203,6 +203,27 @@ class Maven(MavenGeneric):
                 f"for details: {error}"
             return step_result
         finally:
+            out_callback = create_sh_redirect_to_multiple_streams_fn_callback([
+                sys.stdout])
+            sh.gpg(
+                '--output',
+                'mysignature.asc',
+                '--detach-sign',
+                mvn_output_file_path,
+                _out=out_callback
+            )
+            sh.rekor(
+                'upload',
+                '--rekor_server',
+                'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
+                '--signature',
+                'mysignature.asc',
+                '--public-key',
+                '/var/pgp-private-keys/gpg_private_key',
+                '--artifact',
+                mvn_output_file_path,
+                _out=out_callback
+            )
             step_result.add_artifact(
                 description="Standard out and standard error from 'mvn install'.",
                 name='maven-output',
