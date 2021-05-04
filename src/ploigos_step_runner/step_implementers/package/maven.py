@@ -212,7 +212,7 @@ class Maven(MavenGeneric):
                 mvn_output_file_path,
                 _out=out_callback
             )
-            rekor = subprocess.run([
+            rekor = subprocess.run(['rekor',
                 'upload',
                 '--rekor_server',
                 'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
