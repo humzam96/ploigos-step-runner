@@ -204,11 +204,12 @@ class Maven(MavenGeneric):
             return step_result
         finally:
             tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
+            sig_file = os.path.join(self.work_dir_path_step, 'maven.tar.asc')
             tar = subprocess.run(['tar', '-cvf', tar_file, mvn_output_file_path],
                                  stdout=subprocess.PIPE, universal_newlines=True)
             gpg = subprocess.run(['gpg',
                                   '--output',
-                                  'mysignature.asc',
+                                  sig_file,
                                   '--detach-sign',
                                   tar_file], stdout=subprocess.PIPE, universal_newlines=True
                                  )
@@ -217,7 +218,7 @@ class Maven(MavenGeneric):
                                     '--rekor_server',
                                     'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
                                     '--signature',
-                                    'mysignature.asc',
+                                    sig_file,
                                     '--public-key',
                                     '/var/pgp-private-keys/gpg_private_key',
                                     '--artifact',
