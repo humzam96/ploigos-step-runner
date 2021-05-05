@@ -203,33 +203,6 @@ class Maven(MavenGeneric):
                 f"for details: {error}"
             return step_result
         finally:
-            out_callback = create_sh_redirect_to_multiple_streams_fn_callback([
-                sys.stdout])
-            tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
-            tar = subprocess.run(['tar', '-cf', tar_file, mvn_output_file_path],
-                                  stdout=subprocess.PIPE, universal_newlines=True)
-            gpg= subprocess.run(['gpg',
-                '--output',
-                'mysignature.asc',
-                '--detach-sign',
-                tar_file], stdout=subprocess.PIPE, universal_newlines=True
-            )
-            rekor = subprocess.run(['rekor',
-                'upload',
-                '--rekor_server',
-                'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
-                '--signature',
-                'mysignature.asc',
-                '--public-key',
-                '/var/pgp-private-keys/gpg_private_key',
-                '--artifact',
-                tar_file], stdout=subprocess.PIPE, universal_newlines=True)
-            # print(tar.stdout)
-            # print(tar.stderr)
-            print(gpg.stdout)
-            print(gpg.stderr)
-            print(rekor.stdout)
-            print(rekor.stderr)
             step_result.add_artifact(
                 description="Standard out and standard error from 'mvn install'.",
                 name='maven-output',
@@ -285,5 +258,31 @@ class Maven(MavenGeneric):
            name='package-artifacts',
            value=[package_artifacts]
         )
+
+        tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
+        tar = subprocess.run(['tar', '-cf', tar_file, mvn_output_file_path],
+                             stdout=subprocess.PIPE, universal_newlines=True)
+        gpg = subprocess.run(['gpg',
+                              '--output',
+                              'mysignature.asc',
+                              '--detach-sign',
+                              tar_file], stdout=subprocess.PIPE, universal_newlines=True
+                             )
+        rekor = subprocess.run(['rekor',
+                                'upload',
+                                '--rekor_server',
+                                'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
+                                '--signature',
+                                'mysignature.asc',
+                                '--public-key',
+                                '/var/pgp-private-keys/gpg_private_key',
+                                '--artifact',
+                                tar_file], stdout=subprocess.PIPE, universal_newlines=True)
+        print(tar.stdout)
+        print(tar.stderr)
+        print(gpg.stdout)
+        print(gpg.stderr)
+        print(rekor.stdout)
+        print(rekor.stderr)
 
         return step_result
