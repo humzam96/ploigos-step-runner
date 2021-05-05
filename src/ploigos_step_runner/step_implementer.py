@@ -426,7 +426,6 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
             yml_filename=self.results_file_path
         )
         rekor_uuid = self.upload_to_rekor()
-        print(rekor_uuid)
 
         # print the step run results
         StepImplementer.__print_section_title(
@@ -434,10 +433,11 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
             div_char="-",
             indent=1
         )
-
         StepImplementer.__print_data('Results File Path', self.results_file_path)
 
         StepImplementer.__print_data('Results', step_result.get_step_result_dict())
+
+        StepImplementer.__print_data('Rekor Upload Output', rekor_uuid)
 
         StepImplementer.__print_section_title(f'Step End - {self.step_name}')
 
