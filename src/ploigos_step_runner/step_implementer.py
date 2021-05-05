@@ -82,12 +82,12 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
 
         super().__init__()
 
-    @property
-    def rekor_uuid(self):
-        """
-        Getter for rekor uuid used for verifying public signature log
-        """
-        return self.rekor_uuid
+    # @property
+    # def rekor_uuid(self):
+    #     """
+    #     Getter for rekor uuid used for verifying public signature log
+    #     """
+    #     return self.rekor_uuid
 
     @property
     def config(self):
@@ -425,7 +425,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         self.workflow_result.write_results_to_yml_file(
             yml_filename=self.results_file_path
         )
-        self.rekor_uuid = self.upload_to_rekor()
+        rekor_uuid = self.upload_to_rekor()
         print(self.rekor_uuid)
 
         # print the step run results
