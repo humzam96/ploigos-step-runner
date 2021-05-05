@@ -277,7 +277,7 @@ class Maven(MavenGeneric):
                                 '--signature',
                                 sig_file,
                                 '--public-key',
-                                '/var/pgp-private-keys/gpg_private_key',
+                                '/var/pgp-private-keys/gpg_public_key',
                                 '--artifact',
                                 tar_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                universal_newlines=True)
