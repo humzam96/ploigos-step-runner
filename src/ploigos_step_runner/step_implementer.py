@@ -446,15 +446,15 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
     def upload_to_rekor(self):
         # tar_file = os.path.join(self.self.results_dir_path, 'results_file.tar')
         # sig_file = os.path.join(self.results_file_path, 'results_file.tar.asc')
-        tar_file = self.results_file_path + '.tar'
+        artifact_file = self.results_file_path # + '.tar'
         sig_file = tar_file + '.asc'
-        tar = subprocess.run(['tar', '-cvf', tar_file, self.results_file_path],
-                             stdout=subprocess.PIPE, universal_newlines=True)
+        # tar = subprocess.run(['tar', '-cvf', tar_file, self.results_file_path],
+        #                      stdout=subprocess.PIPE, universal_newlines=True)
         gpg = subprocess.run(['gpg',
                               '--output',
                               sig_file,
                               '--detach-sign',
-                              tar_file], stdout=subprocess.PIPE, universal_newlines=True
+                              artifact_file], stdout=subprocess.PIPE, universal_newlines=True
                              )
         rekor = subprocess.run(['rekor',
                                 'upload',
@@ -465,7 +465,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                                 '--public-key',
                                 '/var/pgp-private-keys/gpg_public_key',
                                 '--artifact',
-                                tar_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                artifact_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                universal_newlines=True)
         if rekor.returncode != 0:
             return rekor.stderr
