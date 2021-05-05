@@ -4,6 +4,7 @@ import os
 import pprint
 import sys
 import textwrap
+import subprocess
 from abc import ABC, abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
@@ -80,6 +81,13 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         self.__workflow_result = None
 
         super().__init__()
+
+    @property
+    def rekor_uuid(self):
+        """
+        Getter for rekor uuid used for verifying public signature log
+        """
+        return self.rekor_uuid
 
     @property
     def config(self):
@@ -417,6 +425,8 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         self.workflow_result.write_results_to_yml_file(
             yml_filename=self.results_file_path
         )
+        self.rekor_uuid = self.upload_to_rekor()
+        print(self.rekor_uuid)
 
         # print the step run results
         StepImplementer.__print_section_title(
@@ -432,6 +442,32 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         StepImplementer.__print_section_title(f'Step End - {self.step_name}')
 
         return step_result.success
+
+    def upload_to_rekor(self):
+        # tar_file = os.path.join(self.self.results_dir_path, 'results_file.tar')
+        # sig_file = os.path.join(self.results_file_path, 'results_file.tar.asc')
+        tar_file = self.results_file_path + '.tar'
+        sig_file = tar_file + '.asc'
+        tar = subprocess.run(['tar', '-cvf', tar_file, self.results_file_path],
+                             stdout=subprocess.PIPE, universal_newlines=True)
+        gpg = subprocess.run(['gpg',
+                              '--output',
+                              sig_file,
+                              '--detach-sign',
+                              tar_file], stdout=subprocess.PIPE, universal_newlines=True
+                             )
+        rekor = subprocess.run(['rekor',
+                                'upload',
+                                '--rekor_server',
+                                'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
+                                '--signature',
+                                sig_file,
+                                '--public-key',
+                                '/var/pgp-private-keys/gpg_public_key',
+                                '--artifact',
+                                tar_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               universal_newlines=True)
+        return rekor.stdout
 
     def get_value(self, key):
         """Get the value for a given key, either from given configuration or from the result
