@@ -467,7 +467,9 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                                 '--artifact',
                                 tar_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                universal_newlines=True)
-        return rekor.stdout.read()
+        if rekor.returncode != 0:
+            return rekor.stderr
+        return rekor.stdout
 
     def get_value(self, key):
         """Get the value for a given key, either from given configuration or from the result
