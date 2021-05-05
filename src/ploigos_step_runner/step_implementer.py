@@ -446,7 +446,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
     def upload_to_rekor(self):
         # tar_file = os.path.join(self.self.results_dir_path, 'results_file.tar')
         # sig_file = os.path.join(self.results_file_path, 'results_file.tar.asc')
-        artifact_file = os.path.join(self.results_dir_path, self.results_file_path)
+        artifact_file = os.path.join(self.work_dir_path_step, self.results_file_path)
         sig_file = artifact_file + '.asc'
         # tar = subprocess.run(['tar', '-cvf', tar_file, self.results_file_path],
         #                      stdout=subprocess.PIPE, universal_newlines=True)
