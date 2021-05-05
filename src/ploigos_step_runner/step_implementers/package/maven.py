@@ -260,7 +260,9 @@ class Maven(MavenGeneric):
         )
         tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
         sig_file = os.path.join(self.work_dir_path_step, 'maven.tar.asc')
-        tar = subprocess.run(['tar', '-cvf', tar_file, artifact_parent_dir_full_path],
+        tar = subprocess.run(['tar', '-cvf', tar_file, os.path.join(
+                os.path.dirname(os.path.abspath(pom_file)),
+                artifact_parent_dir)],
                              stdout=subprocess.PIPE, universal_newlines=True)
         gpg = subprocess.run(['gpg',
                               '--output',
