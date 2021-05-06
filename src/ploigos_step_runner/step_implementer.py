@@ -436,8 +436,8 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         print ("working dir path: "+self.__workflow_result_pickle_file_path)
         ls = subprocess.run(['ls', '-l', self.work_dir_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         print (ls.stdout)
-        rekor_uuid = self.upload_to_rekor(self.__workflow_result_pickle_file_path)
-
+        # rekor_uuid = self.upload_to_rekor(self.__workflow_result_pickle_file_path)
+        rekor_uuid = self.upload_to_rekor('/home/jenkins/agent/workspace/kins_workflow-standard_main-6BTIJE3FO6WQKMB7JWW6NC6ZB5BJXOTJNW2GIODVUPTFUCTF7GUA/step-runner-results/step-runner-results.yml')
         # print the step run results
         StepImplementer.__print_section_title(
             f"Results - {self.step_name}",
