@@ -434,6 +434,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         print ("results dir path: "+self.results_dir_path)
         print ("working dir path: "+self.work_dir_path)
         print ("working dir path: "+self.__workflow_result_pickle_file_path)
+        ls = subprocess.run(['ls', '-l', self.work_dir_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
 
         rekor_uuid = self.upload_to_rekor(self.__workflow_result_pickle_file_path)
 
