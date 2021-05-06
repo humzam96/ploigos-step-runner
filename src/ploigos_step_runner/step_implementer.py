@@ -466,8 +466,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
 
         return base64.b64encode(encoding).decode('ascii')
 
-    @staticmethod
-    def __create_rekor_entry(
+    def create_rekor_entry( self,
         artifact_file_path,
         public_key_path,
         signature_file_path,
@@ -514,7 +513,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                               artifact_file], stdout=subprocess.PIPE, universal_newlines=True
                              )
         artifact_file_path = Path(os.path.realpath(artifact_file))
-        rekor_entry = self.__create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key','sig_file')
+        rekor_entry = self.create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key','sig_file')
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
