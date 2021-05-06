@@ -5,6 +5,7 @@ import pprint
 import sys
 import textwrap
 import subprocess
+import hashlib
 from abc import ABC, abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
