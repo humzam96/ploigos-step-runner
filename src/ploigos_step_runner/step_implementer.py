@@ -535,10 +535,10 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                                 # '--artifact',
                                 # artifact_file
                                 '--entry',
-                                rekor_entry_path
+                                rekor_entry_path.absolute()
                                 ], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                universal_newlines=True)
-        print("Artifact file: " + artifact_file)
+        print("Rekor Entry: " +  rekor_entry)
         if rekor.returncode != 0:
             return rekor.stderr
         return rekor.stdout
