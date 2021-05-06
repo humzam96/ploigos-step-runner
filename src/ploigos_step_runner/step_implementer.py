@@ -430,14 +430,18 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         self.workflow_result.write_results_to_yml_file(
             yml_filename=self.results_file_path
         )
-        print ("results file path: "+self.results_file_path)
-        print ("results dir path: "+self.results_dir_path)
-        print ("working dir path: "+self.work_dir_path)
-        print ("working dir path: "+self.__workflow_result_pickle_file_path)
-        ls = subprocess.run(['ls', '-l', self.work_dir_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-        print (ls.stdout)
-        # rekor_uuid = self.upload_to_rekor(self.__workflow_result_pickle_file_path)
-        rekor_uuid = self.upload_to_rekor('/home/jenkins/agent/workspace/kins_workflow-standard_main-6BTIJE3FO6WQKMB7JWW6NC6ZB5BJXOTJNW2GIODVUPTFUCTF7GUA/step-runner-results/step-runner-results.yml')
+        # print ("results file path: "+self.results_file_path)
+        # print ("results dir path: "+self.results_dir_path)
+        # print ("working dir path: "+self.work_dir_path)
+        # print ("working dir path: "+self.__workflow_result_pickle_file_path)
+        # ls = subprocess.run(['ls', '-l', self.work_dir_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        # print (ls.stdout)
+        json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
+        if json_file.exists():
+            json_file.unlink()
+        json_file.write_text(json.dumps(step_result.get_step_result_dict()))
+        rekor_uuid = self.upload_to_rekor(os.path.join(self.work_dir_path, self.step_name+'.json'))
+        # rekor_uuid = self.upload_to_rekor('/home/jenkins/agent/workspace/kins_workflow-standard_main-6BTIJE3FO6WQKMB7JWW6NC6ZB5BJXOTJNW2GIODVUPTFUCTF7GUA/step-runner-results/step-runner-results.yml')
         # print the step run results
         StepImplementer.__print_section_title(
             f"Results - {self.step_name}",
