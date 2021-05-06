@@ -513,7 +513,8 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
                               '--detach-sign',
                               artifact_file], stdout=subprocess.PIPE, universal_newlines=True
                              )
-        rekor_entry = self.__create_rekor_entry(artifact_file,'/var/pgp-private-keys/gpg_public_key','sig_file')
+        artifact_file_path = Path(os.path.realpath(artifact_file))
+        rekor_entry = self.__create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key','sig_file')
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
