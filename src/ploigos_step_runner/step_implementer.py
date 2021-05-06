@@ -512,6 +512,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         #                      stdout=subprocess.PIPE, universal_newlines=True)
         gpg = subprocess.run(['gpg',
                               '--armor',
+                              '-vv',
                               '-u',
                               'tssc-service-account@redhat.com',
                               '--output',
