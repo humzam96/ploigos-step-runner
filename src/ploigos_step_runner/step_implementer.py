@@ -510,16 +510,28 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         sig_file = artifact_file + '.asc'
         # tar = subprocess.run(['tar', '-cvf', tar_file, self.results_file_path],
         #                      stdout=subprocess.PIPE, universal_newlines=True)
-        gpg = subprocess.run(['gpg',
-                              '--armor',
-                              '-vv',
-                              '-u',
-                              'tssc-service-account@redhat.com',
-                              '--output',
-                              sig_file,
-                              '--detach-sign',
-                              artifact_file], stdout=subprocess.PIPE, universal_newlines=True
-                             )
+        sh.gpg(
+            '--armor',
+            '-u',
+            'tssc-service-account@redhat.com',
+            '--output', sig_file,
+            '--detach-sign',
+            artifact_file,
+            _out=stdout_callback,
+            _err_to_out=True,
+            _tee='out'
+        )
+        #
+        # gpg = subprocess.run(['gpg',
+        #                       '--armor',
+        #                       '-vv',
+        #                       '-u',
+        #                       'tssc-service-account@redhat.com',
+        #                       '--output',
+        #                       sig_file,
+        #                       '--detach-sign',
+        #                       artifact_file], stdout=subprocess.PIPE, universal_newlines=True
+        #                      )
         artifact_file_path = Path(os.path.realpath(artifact_file))
         rekor_entry = self.create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key',sig_file)
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
