@@ -36,7 +36,6 @@ DEFAULT_CONFIG = {
 
 REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
-    'package-artifacts',
     'configlint-yml-path',
     'sonarqube-result-set',
     'maven-output',
@@ -227,6 +226,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
 
         for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
             print(x)
+            print(self.get_value(x))
             if x != 'rekor-server':
                 # json_file = Path(x.value) #Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
                 # if json_file.exists():
