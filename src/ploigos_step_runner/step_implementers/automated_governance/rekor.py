@@ -47,7 +47,7 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'container-image-signature-private-key-fingerprint',
     'container-image-signature-file-path',
     'argocd-deployed-manifest',
-    'configlint-result-set'
+    'configlint-result-set',
     'surefire-reports',
     'cucumber-report-json',
 ]
@@ -185,7 +185,6 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             sys.stdout,
             rekor_upload_stdout_result
         ])
-
         rekor = sh.rekor(
                         'upload',
                         '--rekor_server',
