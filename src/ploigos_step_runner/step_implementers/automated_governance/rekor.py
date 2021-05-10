@@ -200,8 +200,10 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                         rekor_server,
                         '--entry',
                         rekor_entry_path.absolute(),
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                       universal_newlines=True)
+                        _out=rekor_upload_stdout_callback,
+                        _err_to_out=True,
+                        _tee='out'
+                        )
         if rekor.returncode != 0:
             return rekor.stderr
         return rekor.stdout
