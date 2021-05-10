@@ -47,7 +47,6 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
     'configlint-yml-path',
     'sonarqube-result-set',
-    'image-tar-file',
     'html-report',
     'xml-report',
     'stdout-report',
@@ -57,6 +56,7 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'configlint-result-set',
     'surefire-reports',
     'cucumber-report-json',
+    'image-tar-file'
 ]
 
 
@@ -239,11 +239,11 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             print(self.get_value(x))
             if x == 'image-tar-file':
                 image_hash = self.get_image_hash(self.get_value(x))
-                print(image_hash)
+                print(image_hash.stdout)
                 json_file = Path(self.get_value(x)+'.sha256')
                 if json_file.exists():
                     json_file.unlink()
-                json_file.write_text(image_hash)
+                json_file.write_text(image_hash.stdout)
                 self.upload_to_rekor(self.get_value(x)+'.sha256')
             elif x != 'rekor-server':
                 self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
