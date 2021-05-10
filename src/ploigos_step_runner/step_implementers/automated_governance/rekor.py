@@ -35,8 +35,21 @@ DEFAULT_CONFIG = {
 }
 
 REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
-    'rekor-server'
-
+    'rekor-server',
+    'package-artifacts',
+    'configlint-yml-path',
+    'sonarqube-result-set',
+    'maven-output',
+    'image-tar-file',
+    'html-report',
+    'xml-report',
+    'stdout-report',
+    'container-image-signature-private-key-fingerprint',
+    'container-image-signature-file-path',
+    'argocd-deployed-manifest',
+    'configlint-result-set'
+    'surefire-reports',
+    'cucumber-report-json',
 ]
 
 
@@ -213,10 +226,13 @@ class Maven(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         step_result = StepResult.from_step_implementer(self)
 
-        json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
-        if json_file.exists():
-            json_file.unlink()
-        json_file.write_text(json.dumps(step_result.get_step_result_dict()))
-        rekor_uuid = self.upload_to_rekor(os.path.join(self.work_dir_path, self.step_name+'.json'))
+        for x in _required_config_or_result_keys():
+            print(x)
+            if x != 'rekor-server':
+                # json_file = Path(x.value) #Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
+                # if json_file.exists():
+                #     json_file.unlink()
+                # json_file.write_text()
+                rekor_uuid = self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
 
         return step_result
