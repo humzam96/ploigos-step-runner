@@ -237,14 +237,14 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
             print(x)
             print(self.get_value(x))
-            if x != 'rekor-server':
-                self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
-            elif x == 'image-tar-file':
+            if x == 'image-tar-file':
                 image_hash = get_image_hash(self.get_value(x))
                 json_file = Path(os.path.join(self.get_value(x), self.step_name+'.sha256'))
                 if json_file.exists():
                     json_file.unlink()
                 json_file.write_text(str(image_hash))
                 self.upload_to_rekor(os.path.join(self.get_value(x), self.step_name+'.sha256'))
+            elif x != 'rekor-server':
+                self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
 
         return step_result
