@@ -214,13 +214,13 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             sys.stdout,
             sha_stdout_result
         ])
-        sh.sha256sum(  # pylint: disable=no-member
+        return sh.sha256sum(  # pylint: disable=no-member
             artifact_file,
             _out=sha_stdout_callback,
             _err_to_out=True,
             _tee='out'
         )
-        return sha_stdout_result
+
 
 
 
