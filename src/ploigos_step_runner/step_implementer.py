@@ -445,7 +445,7 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
 
         StepImplementer.__print_data('Results', step_result.get_step_result_dict())
 
-        StepImplementer.__print_data('Rekor Upload Output', rekor_uuid)
+        # StepImplementer.__print_data('Rekor Upload Output', rekor_uuid)
 
         StepImplementer.__print_section_title(f'Step End - {self.step_name}')
 
