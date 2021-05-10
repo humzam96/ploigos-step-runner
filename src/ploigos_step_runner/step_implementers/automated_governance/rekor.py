@@ -233,7 +233,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         step_result = StepResult.from_step_implementer(self)
 
-        all_workflows = self.workflow_result()
+        all_workflows = self.workflow_result.workflow_list
         json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
         if json_file.exists():
             json_file.unlink()
