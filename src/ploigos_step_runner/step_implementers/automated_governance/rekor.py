@@ -37,6 +37,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from ploigos_step_runner import StepImplementer, StepResult, WorkflowResult
 from ploigos_step_runner.utils.io import create_sh_redirect_to_multiple_streams_fn_callback
 from ploigos_step_runner.utils.io import TextIOIndenter
+from ploigos_step_runner.utils.dict import deep_merge
 
 
 
@@ -220,6 +221,25 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         )
 
 
+    def get_all_step_results_dict(self):
+        """Get a dictionary of all of the recorded StepResults.
+
+        Returns
+        -------
+        results: dict
+            results of all steps from list
+        """
+        all_results = {}
+        for step_result in self.workflow_list:
+            all_results = deep_merge(
+                dest=all_results,
+                source=step_result.get_step_result_dict(),
+                overwrite_duplicate_keys=True
+            )
+        step_runner_results = {
+            'step-runner-results': all_results
+        }
+        return step_runner_results
 
 
     def _run_step(self):
@@ -232,7 +252,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         step_result = StepResult.from_step_implementer(self)
 
-        all_workflows = self.workflow_result.get_all_step_results_dict()
+        all_workflows = self.get_all_step_results_dict()
         print(all_workflows)
         json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
         if json_file.exists():
