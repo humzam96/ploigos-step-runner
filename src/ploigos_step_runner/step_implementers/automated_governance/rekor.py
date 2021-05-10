@@ -208,8 +208,6 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         #     return rekor.stderr
         # return rekor.stdout
 
-
-
     def get_image_hash(self, artifact_file):
         sha_stdout_result = StringIO()
         sha_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
@@ -240,10 +238,13 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             print(x)
             print(self.get_value(x))
             if x != 'rekor-server':
-                # json_file = Path(x.value) #Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
-                # if json_file.exists():
-                #     json_file.unlink()
-                # json_file.write_text()
                 self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
+            elif x == 'image-tar-file':
+                image_hash = get_image_hash(self.get_value(x))
+                json_file = Path(os.path.join(self.get_value(x), self.step_name+'.sha256'))
+                if json_file.exists():
+                    json_file.unlink()
+                json_file.write_text()
+                self.upload_to_rekor(os.path.join(self.get_value(x), self.step_name+'.sha256'))
 
         return step_result
