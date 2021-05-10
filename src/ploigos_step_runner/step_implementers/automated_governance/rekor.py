@@ -244,6 +244,6 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 # if json_file.exists():
                 #     json_file.unlink()
                 # json_file.write_text()
-                rekor_uuid = self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
+                self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
 
         return step_result
