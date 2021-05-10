@@ -130,7 +130,7 @@ class WorkflowResult:
         try:
             create_parent_dir(yml_filename)
             with open(yml_filename, 'w') as file:
-                results = self.__get_all_step_results_dict()
+                results = self.get_all_step_results_dict()
                 yaml.dump(results, file, indent=4)
         except Exception as error:
             raise RuntimeError(f'error dumping {yml_filename}: {error}') from error
@@ -150,7 +150,7 @@ class WorkflowResult:
         try:
             create_parent_dir(json_filename)
             with open(json_filename, 'w') as file:
-                results = self.__get_all_step_results_dict()
+                results = self.get_all_step_results_dict()
                 json.dump(results, file, indent=4)
         except Exception as error:
             raise RuntimeError(f'error dumping {json_filename}: {error}') from error
@@ -213,7 +213,7 @@ class WorkflowResult:
         except Exception as error:
             raise RuntimeError(f'error dumping {pickle_filename}: {error}') from error
 
-    def __get_all_step_results_dict(self):
+    def get_all_step_results_dict(self):
         """Get a dictionary of all of the recorded StepResults.
 
         Returns
