@@ -45,17 +45,16 @@ DEFAULT_CONFIG = {
 
 REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
-    'configlint-yml-path',
+    # 'configlint-yml-path',
     'sonarqube-result-set',
     # 'html-report',
     'xml-report',
     'stdout-report',
     # 'container-image-signature-private-key-fingerprint',
     # 'container-image-signature-file-path',
-    'argocd-deployed-manifest',
-    'configlint-result-set',
-    # 'surefire-reports',
-    'cucumber-report-json',
+    # 'argocd-deployed-manifest',
+    # 'configlint-result-set',
+    # 'cucumber-report-json',
     'image-tar-file'
 ]
 
