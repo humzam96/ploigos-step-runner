@@ -98,6 +98,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         return REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS
 
+    @staticmethod
     def base64_encode(
             file_path
     ):
