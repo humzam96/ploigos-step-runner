@@ -244,7 +244,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 json_file = Path(os.path.join(self.get_value(x), self.step_name+'.sha256'))
                 if json_file.exists():
                     json_file.unlink()
-                json_file.write_text()
+                json_file.write_text(str(image_hash))
                 self.upload_to_rekor(os.path.join(self.get_value(x), self.step_name+'.sha256'))
 
         return step_result
