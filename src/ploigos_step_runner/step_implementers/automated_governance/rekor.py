@@ -113,11 +113,10 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
 
         try:
             encoding = Path(file_path).read_text().encode('ascii')
+            return base64.b64encode(encoding).decode('ascii')
         except UnicodeDecodeError:
-            encoding = Path(file_path).read_bytes().encode('utf-8')
-            pass
-
-        return base64.b64encode(encoding).decode('ascii')
+            encoding = Path(file_path).read_text().encode('utf-8')
+            return base64.b64encode(encoding).decode('utf-8')
 
     def create_rekor_entry( self,
         artifact_file_path,
