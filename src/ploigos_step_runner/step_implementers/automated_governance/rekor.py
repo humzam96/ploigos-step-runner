@@ -114,7 +114,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         try:
             encoding = Path(file_path).read_text().encode('ascii')
         except UnicodeDecodeError:
-            encoding = Path(file_path).read_bytes()
+            encoding = Path(file_path).read_bytes().encode('utf-8')
             pass
 
         return base64.b64encode(encoding).decode('ascii')
