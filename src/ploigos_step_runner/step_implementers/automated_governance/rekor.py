@@ -230,7 +230,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             results of all steps from list
         """
         all_results = {}
-        for step_result in self.workflow_list:
+        for step_result in self.workflow_result.workflow_list:
             all_results = deep_merge(
                 dest=all_results,
                 source=step_result.get_step_result_dict(),
