@@ -46,16 +46,6 @@ DEFAULT_CONFIG = {
 
 REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
-    # 'configlint-yml-path',
-    'sonarqube-result-set',
-    # 'html-report',
-    'xml-report',
-    'stdout-report',
-    # 'container-image-signature-private-key-fingerprint',
-    # 'container-image-signature-file-path',
-    # 'argocd-deployed-manifest',
-    # 'configlint-result-set',
-    # 'cucumber-report-json',
     'image-tar-file'
 ]
 
@@ -119,11 +109,10 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             return base64.b64encode(encoding).decode('utf-8')
 
     def create_rekor_entry( self,
-        artifact_file_path,
         public_key_path,
         signature_file_path,
     ):
-        artifact_hash = hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
+        artifact_hash = self.get_image_hash(self.get_value(image-tar-file)) #hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
         # print(f"Hash is {artifact_hash}")
         base64_encoded_artifact = self.base64_encode(artifact_file_path)
 
@@ -181,8 +170,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         if sig_file_path.exists():
             sig_file_path.unlink()
         self.get_gpg_key(sig_file,artifact_file)
-        artifact_file_path = Path(os.path.realpath(artifact_file))
-        rekor_entry = self.create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key',sig_file)
+        rekor_entry = self.create_rekor_entry('/var/pgp-private-keys/gpg_public_key',sig_file)
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
@@ -203,18 +191,15 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 _err_to_out=True,
                 _tee='out'
                 )
-        # if rekor.returncode != 0:
-        #     return rekor.stderr
-        # return rekor.stdout
 
-    def get_image_hash(self, artifact_file):
+    def get_image_hash(self, image_path):
         sha_stdout_result = StringIO()
         sha_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
             sha_stdout_result
         ])
         return sh.sha256sum(  # pylint: disable=no-member
-            artifact_file,
+            image_path,
             _out=sha_stdout_callback,
             _err_to_out=True,
             _tee='out'
@@ -253,25 +238,10 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         step_result = StepResult.from_step_implementer(self)
 
         all_workflows = self.get_all_step_results_dict()
-        print(all_workflows)
         json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
         if json_file.exists():
             json_file.unlink()
         json_file.write_text(json.dumps(all_workflows))
         rekor_uuid = self.upload_to_rekor(os.path.join(self.work_dir_path, self.step_name + '.json'))
-
-        # for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
-        #     print(x)
-        #     print(self.get_value(x))
-        #     if x == 'image-tar-file':
-        #         image_hash = self.get_image_hash(self.get_value(x))
-        #         print(image_hash.stdout)
-        #         json_file = Path(self.get_value(x)+'.sha256')
-        #         if json_file.exists():
-        #             json_file.unlink()
-        #         json_file.write_text(image_hash.stdout)
-        #         self.upload_to_rekor(self.get_value(x)+'.sha256')
-        #     elif x != 'rekor-server':
-        #         self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
 
         return step_result
