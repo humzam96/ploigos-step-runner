@@ -212,7 +212,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         sha_stdout_result = StringIO()
         sha_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
-            gpg_stdout_result
+            sha_stdout_result
         ])
         sh.sha256sum(  # pylint: disable=no-member
             artifact_file,
@@ -239,6 +239,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             print(self.get_value(x))
             if x == 'image-tar-file':
                 image_hash = self.get_image_hash(self.get_value(x))
+                print(image_hash)
                 json_file = Path(os.path.join(self.get_value(x), self.step_name+'.sha256'))
                 if json_file.exists():
                     json_file.unlink()
