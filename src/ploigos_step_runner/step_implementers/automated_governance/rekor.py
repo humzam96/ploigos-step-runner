@@ -112,7 +112,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         public_key_path,
         signature_file_path,
     ):
-        artifact_hash = self.get_image_hash(self.get_value(image-tar-file)) #hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
+        artifact_hash = self.get_image_hash(self.get_value('image-tar-file')) #hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
         # print(f"Hash is {artifact_hash}")
         base64_encoded_artifact = self.base64_encode(artifact_file_path)
 
