@@ -238,7 +238,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             print(x)
             print(self.get_value(x))
             if x == 'image-tar-file':
-                image_hash = get_image_hash(self.get_value(x))
+                image_hash = self.get_image_hash(self.get_value(x))
                 json_file = Path(os.path.join(self.get_value(x), self.step_name+'.sha256'))
                 if json_file.exists():
                     json_file.unlink()
