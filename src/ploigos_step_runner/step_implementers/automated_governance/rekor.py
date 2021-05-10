@@ -97,8 +97,8 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         Base64Contents
             base64 encoded string of file contents
         """
-        text = Path(file_path).read_text()
-        return base64.b64encode(text)
+        bytes = Path(file_path).read_bytes()
+        return base64.b64encode(bytes)
 
     def get_image_hash(self, image_path):
         sha_stdout_result = StringIO()
