@@ -47,14 +47,14 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
     'configlint-yml-path',
     'sonarqube-result-set',
-    'html-report',
+    # 'html-report',
     'xml-report',
     'stdout-report',
-    'container-image-signature-private-key-fingerprint',
-    'container-image-signature-file-path',
+    # 'container-image-signature-private-key-fingerprint',
+    # 'container-image-signature-file-path',
     'argocd-deployed-manifest',
     'configlint-result-set',
-    'surefire-reports',
+    # 'surefire-reports',
     'cucumber-report-json',
     'image-tar-file'
 ]
