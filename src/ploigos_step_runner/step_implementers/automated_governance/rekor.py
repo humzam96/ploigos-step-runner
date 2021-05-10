@@ -112,8 +112,8 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         encoding = None
 
         try:
-            encoding = Path(file_path).read_text().encode('ascii')
-            return base64.b64encode(encoding).decode('ascii')
+            encoding = Path(file_path).read_text().encode('utf-8')
+            return base64.b64encode(encoding).decode('utf-8')
         except UnicodeDecodeError:
             encoding = Path(file_path).read_text().encode('utf-8')
             return base64.b64encode(encoding).decode('utf-8')
@@ -233,18 +233,25 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         step_result = StepResult.from_step_implementer(self)
 
-        for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
-            print(x)
-            print(self.get_value(x))
-            if x == 'image-tar-file':
-                image_hash = self.get_image_hash(self.get_value(x))
-                print(image_hash.stdout)
-                json_file = Path(self.get_value(x)+'.sha256')
-                if json_file.exists():
-                    json_file.unlink()
-                json_file.write_text(image_hash.stdout)
-                self.upload_to_rekor(self.get_value(x)+'.sha256')
-            elif x != 'rekor-server':
-                self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
+        all_workflows = self.workflow_result()
+        json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
+        if json_file.exists():
+            json_file.unlink()
+        json_file.write_text(json.dumps(all_workflows))
+        rekor_uuid = self.upload_to_rekor(os.path.join(self.work_dir_path, self.step_name + '.json'))
+
+        # for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
+        #     print(x)
+        #     print(self.get_value(x))
+        #     if x == 'image-tar-file':
+        #         image_hash = self.get_image_hash(self.get_value(x))
+        #         print(image_hash.stdout)
+        #         json_file = Path(self.get_value(x)+'.sha256')
+        #         if json_file.exists():
+        #             json_file.unlink()
+        #         json_file.write_text(image_hash.stdout)
+        #         self.upload_to_rekor(self.get_value(x)+'.sha256')
+        #     elif x != 'rekor-server':
+        #         self.upload_to_rekor(self.get_value(x)) #os.path.join(self.work_dir_path, self.step_name+'.json'))
 
         return step_result
