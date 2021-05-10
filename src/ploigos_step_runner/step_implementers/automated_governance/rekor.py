@@ -225,7 +225,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         step_result = StepResult.from_step_implementer(self)
 
-        for x in _required_config_or_result_keys():
+        for x in REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS:
             print(x)
             if x != 'rekor-server':
                 # json_file = Path(x.value) #Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
