@@ -1,4 +1,4 @@
-"""`StepImplementer` for the `generate-metadata` step using Maven.
+"""`StepImplementer` for the `automated-governance` step using Rekor.
 
 Step Configuration
 ------------------
@@ -53,8 +53,8 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
 ]
 
 
-class Maven(StepImplementer):  # pylint: disable=too-few-public-methods
-    """`StepImplementer` for the `generate-metadata` step using Maven.
+class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
+    """`StepImplementer` for the `automated-governance` step using Rekor.
     """
 
     @staticmethod
