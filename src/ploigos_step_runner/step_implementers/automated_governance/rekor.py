@@ -47,7 +47,6 @@ REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
     'configlint-yml-path',
     'sonarqube-result-set',
-    'maven-output',
     'image-tar-file',
     'html-report',
     'xml-report',
