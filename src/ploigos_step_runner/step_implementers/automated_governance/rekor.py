@@ -113,7 +113,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             _tee='out'
         )
         hash = str(sha).split(' ', 1)[0]
-        return hash.encode('utf-8')
+        return hash
 
     def create_rekor_entry( self,
         public_key_path,
@@ -199,7 +199,8 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 '--rekor_server',
                 rekor_server,
                 '--entry',
-                rekor_entry_path.absolute(),
+                str(os.path.join(self.work_dir_path, 'entry.json'), 'utf-8'),
+                # rekor_entry_path.absolute(),
                 _out=rekor_upload_stdout_callback,
                 _err_to_out=True,
                 _tee='out'
