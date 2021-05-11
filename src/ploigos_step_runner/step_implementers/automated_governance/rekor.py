@@ -106,13 +106,14 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             sys.stdout,
             sha_stdout_result
         ])
-        return sh.sha256(  # pylint: disable=no-member
-            '-q',
+        sha = sh.sha256sum(  # pylint: disable=no-member
             image_path,
             _out=sha_stdout_callback,
             _err_to_out=True,
             _tee='out'
         )
+        hash = str(sha).split(' ', 1)[0]
+        return hash
 
     def create_rekor_entry( self,
         public_key_path,
