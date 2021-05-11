@@ -183,7 +183,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             sys.stdout,
             rekor_upload_stdout_result
         ])
-        print("Rekor Entry: " + json.dumps(rekor_entry, indent=4))
+        # print("Rekor Entry: " + json.dumps(rekor_entry, indent=4))
         sh.rekor(
                 'upload',
                 '--rekor_server',
