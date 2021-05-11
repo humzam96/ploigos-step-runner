@@ -124,7 +124,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         image_hash = self.get_file_hash(image_tar_file) #hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
         image_hash_string = "Image Hash: "+image_hash
         base64_encoded_extra_data = base64.b64encode(image_hash_string.encode('utf-8')).decode('utf-8')
-        content_file_hash = str(self.get_file_hash(content_file).encode('utf-8'))
+        content_file_hash = base64.b64encode(self.get_file_hash(content_file).encode('utf-8')).decode('utf-8')
         base64_encoded_artifact = self.base64_encode(content_file)
         rekor_entry = {
             "kind": "rekord",
