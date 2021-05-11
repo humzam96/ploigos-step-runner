@@ -147,6 +147,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 "extraData": base64_encoded_extra_data
             }
         }
+
         return rekor_entry;
 
     def get_gpg_key(self, sig_file, image_tar_file):
