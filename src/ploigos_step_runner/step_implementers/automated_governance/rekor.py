@@ -184,7 +184,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
         try:
-            with open(os.path.join(self.work_dir_path, 'entry.json'), 'w') as fp:
+            with open(str(os.path.join(self.work_dir_path, 'entry.json'),'utf-8'), 'w') as fp:
                 fp.write(json.dump(rekor_entry))
         except TypeError:
             pass
