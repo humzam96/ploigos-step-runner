@@ -122,9 +122,9 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         content_file
     ):
         image_hash = self.get_file_hash(image_tar_file) #hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
-        extra_data = "Image Hash: "+image_hash
-        base64_encoded_extra_data = base64.b64encode(extra_data.encode('utf-8'))
-        content_file_hash = self.get_file_hash(content_file)
+        image_hash_string = "Image Hash: "+image_hash
+        base64_encoded_extra_data = str(base64.b64encode(image_hash_string.encode('utf-8')).decode('utf-8'))
+        content_file_hash = str(self.get_file_hash(content_file).encode('utf-8'))
         base64_encoded_artifact = self.base64_encode(content_file)
         rekor_entry = {
             "kind": "rekord",
@@ -141,7 +141,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                     "content": base64_encoded_artifact,
                     "hash": {
                         "algorithm": "sha256",
-                        "value": image_hash
+                        "value": content_file_hash
                     }
                 },
                 "extraData": base64_encoded_extra_data
@@ -181,10 +181,12 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         print("Rekor Entry: " + str(rekor_entry))
         print("Rekor entry type: "+ str(type(rekor_entry)))
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
+
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
+        rekor_entry_path_name = str(os.path.join(self.work_dir_path, 'entry.json'), 'utf-8')
         try:
-            with open(str(os.path.join(self.work_dir_path, 'entry.json'),'utf-8'), 'w') as fp:
+            with open(rekor_entry_path_name, 'w') as fp:
                 fp.write(json.dump(rekor_entry))
         except TypeError:
             pass
@@ -199,7 +201,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 '--rekor_server',
                 rekor_server,
                 '--entry',
-                str(os.path.join(self.work_dir_path, 'entry.json'), 'utf-8'),
+                rekor_entry_path_name,
                 # rekor_entry_path.absolute(),
                 _out=rekor_upload_stdout_callback,
                 _err_to_out=True,
