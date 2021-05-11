@@ -185,9 +185,9 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             rekor_entry_path.unlink()
         try:
             with open(os.path.join(self.work_dir_path, 'entry.json'), 'w') as fp:
-                json.dump(rekor_entry, fp)
+                fp.write(json.dump(rekor_entry))
         except TypeError:
-            rekor_entry_path.write_bytes(rekor_entry)
+            pass
         rekor_upload_stdout_result = StringIO()
         rekor_upload_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
