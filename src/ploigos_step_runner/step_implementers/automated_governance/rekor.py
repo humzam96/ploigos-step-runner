@@ -113,7 +113,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             _tee='out'
         )
         hash = str(sha).split(' ', 1)[0]
-        return hash
+        return hash.encode('utf-8')
 
     def create_rekor_entry( self,
         public_key_path,
