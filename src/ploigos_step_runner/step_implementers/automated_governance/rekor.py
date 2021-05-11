@@ -179,7 +179,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         self.get_gpg_key(sig_file,content_file)
         rekor_entry = self.create_rekor_entry('/var/pgp-private-keys/gpg_public_key',sig_file, image_tar_file, content_file)
         print("Rekor Entry: " + str(rekor_entry))
-        print("Rekor entry type: "+ type(rekor_entry))
+        print("Rekor entry type: "+ str(type(rekor_entry)))
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
