@@ -137,10 +137,10 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                     }
                 },
                 "data": {
-                    "content": base64_encoded_image_hash_hash,
+                    "content": base64.b64encode(image_hash.encode('utf-8')).decode('utf-8'),
                     "hash": {
                         "algorithm": "sha256",
-                        "value": image_hash
+                        "value": image_hash_hash
                     }
                 },
                 "extraData": base64_encoded_extra_data
