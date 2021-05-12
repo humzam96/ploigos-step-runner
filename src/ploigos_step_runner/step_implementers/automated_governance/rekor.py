@@ -119,7 +119,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         public_key_path,
         extra_data
     ):
-        hash = hashlib.sha256(extra_data.encode('utf-8')).hexdigest()
+        hash = hashlib.sha256(json.dumps(extra_data).encode('utf-8')).hexdigest()
         sig_file = os.path.join(self.work_dir_path, 'extra_data.json.asc')
         sig_file_path = Path(sig_file)
         if sig_file_path.exists():
