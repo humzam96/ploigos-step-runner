@@ -28,11 +28,12 @@ Result Artifact Key | Description
 --------------------------|------------
 `container-image-version` | Container version to tag built image with
 `image-tar-file`          | Path to the built container image as a tar file
+`image-tar-hash`          | Path to the built container image as a tar file
 """
 import os
 import sys
 from pathlib import Path
-
+import hashlib
 import sh
 from ploigos_step_runner import StepImplementer, StepResult
 from ploigos_step_runner.utils.containers import container_registries_login
@@ -201,6 +202,12 @@ class Buildah(StepImplementer):
                 name='image-tar-file',
                 value=image_tar_path
             )
+            image_tar_hash = hashlib.sha256(Path(image_tar_path).read_bytes()).hexdigest()
+            step_result.add_artifact(
+                name='image-tar-hash',
+                value=image_tar_hash
+            )
+
         except sh.ErrorReturnCode as error:  # pylint: disable=undefined-variable
             step_result.success = False
             step_result.message = f'Issue invoking buildah push to tar file ' \
