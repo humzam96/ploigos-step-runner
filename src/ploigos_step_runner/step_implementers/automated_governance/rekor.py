@@ -168,7 +168,6 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             '--output',
             sig_file,
             '--detach-sign',
-            image_tar_file,
             _out=gpg_stdout_callback,
             _in=image_hash,
             _err_to_out=True,
