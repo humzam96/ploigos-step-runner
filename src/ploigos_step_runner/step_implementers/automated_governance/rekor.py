@@ -117,15 +117,16 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
 
     def create_rekor_entry( self,
         public_key_path,
-        extra_data
+        extra_data_file
     ):
-        hash = hashlib.sha256(json.dumps(extra_data).encode('utf-8')).hexdigest()
-        sig_file = os.path.join(self.work_dir_path, 'extra_data.json.asc')
+        hash = self.get_file_hash(extra_data_file)
+        # hash = hashlib.sha256(json.dumps(extra_data).encode('utf-8')).hexdigest()
+        sig_file = extra_data_file + '.asc'  # os.path.join(self.work_dir_path, 'extra_data.json.asc')
         sig_file_path = Path(sig_file)
         if sig_file_path.exists():
             sig_file_path.unlink()
-        self.get_gpg_key(sig_file,extra_data)
-        base64_encoded_extra_data = base64.b64encode(json.dumps(extra_data).encode('utf-8')).decode('utf-8') #self.base64_encode(extra_data_file)
+        self.get_gpg_key(sig_file,extra_data_file)
+        base64_encoded_extra_data = self.base64_encode(extra_data_file) # base64.b64encode(json.dumps(extra_data).encode('utf-8')).decode('utf-8')
         rekor_entry = {
             "kind": "rekord",
             "apiVersion": "0.0.1",
@@ -150,7 +151,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
 
         return rekor_entry;
 
-    def get_gpg_key(self, sig_file, image_hash):
+    def get_gpg_key(self, sig_file, extra_data_file):
         # NOTE: GPG is weird in that it sends "none error" output to stderr even on success...
         #       so merge the stderr into stdout
         gpg_stdout_result = StringIO()
@@ -165,15 +166,16 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             '--output',
             sig_file,
             '--detach-sign',
+            extra_data_file,
             _out=gpg_stdout_callback,
-            _in=image_hash,
+            # _in=extra_data,
             _err_to_out=True,
             _tee='out'
         )
         return gpg_stdout_result
 
-    def upload_to_rekor(self, rekor_server, extra_data):
-        rekor_entry = self.create_rekor_entry('/var/pgp-private-keys/gpg_public_key', extra_data)
+    def upload_to_rekor(self, rekor_server, extra_data_file):
+        rekor_entry = self.create_rekor_entry('/var/pgp-private-keys/gpg_public_key', extra_data_file)
         print("Rekor Entry: " + str(rekor_entry))
         print("Rekor entry type: "+ str(type(rekor_entry)))
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
@@ -235,12 +237,12 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         rekor_server = self.get_value('rekor-server')
 
         all_workflows = self.get_all_step_results_dict()
-        # extra_data_file = os.path.join(self.work_dir_path, self.step_name+'.json')
-        # extra_data_file_path = Path(extra_data_file)
-        # if extra_data_file_path.exists():
-        #     extra_data_file_path.unlink()
-        # extra_data_file_path.write_text(json.dumps(all_workflows))
-        rekor_uuid = self.upload_to_rekor(rekor_server, all_workflows)
+        extra_data_file = os.path.join(self.work_dir_path, self.step_name+'.json')
+        extra_data_file_path = Path(extra_data_file)
+        if extra_data_file_path.exists():
+            extra_data_file_path.unlink()
+        extra_data_file_path.write_text(json.dumps(all_workflows))
+        rekor_uuid = self.upload_to_rekor(rekor_server, extra_data_file)
 
         return step_result
 
