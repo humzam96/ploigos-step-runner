@@ -102,7 +102,7 @@ class Buildah(StepImplementer):
         """
         return REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS
 
-    def get_file_hash(self, tag):
+    def get_file_hash(self, tag, tar_file):
         """Returns file hash of given file.
 
         Returns
@@ -110,7 +110,9 @@ class Buildah(StepImplementer):
         StepResult
             Object containing the dictionary results of this step.
         """
+        sh.podman.load('-q', '-i', tar_file)
         buf = StringIO()
+        sh.buildah.load()
         sh.buildah.inspect(tag,_out=buf)
 
         for line in buf.getvalue().split('\n'):
