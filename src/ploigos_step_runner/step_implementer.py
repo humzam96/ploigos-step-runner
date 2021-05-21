@@ -88,13 +88,6 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
 
         super().__init__()
 
-    # @property
-    # def rekor_uuid(self):
-    #     """
-    #     Getter for rekor uuid used for verifying public signature log
-    #     """
-    #     return self.rekor_uuid
-
     @property
     def config(self):
         """
@@ -431,11 +424,6 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
         self.workflow_result.write_results_to_yml_file(
             yml_filename=self.results_file_path
         )
-        # json_file = Path(os.path.join(self.work_dir_path, self.step_name+'.json'))
-        # if json_file.exists():
-        #     json_file.unlink()
-        # json_file.write_text(json.dumps(step_result.get_step_result_dict()))
-        # rekor_uuid = self.upload_to_rekor(os.path.join(self.work_dir_path, self.step_name+'.json'))
         StepImplementer.__print_section_title(
             f"Results - {self.step_name}",
             div_char="-",
@@ -445,101 +433,9 @@ class StepImplementer(ABC):  # pylint: disable=too-many-instance-attributes
 
         StepImplementer.__print_data('Results', step_result.get_step_result_dict())
 
-        # StepImplementer.__print_data('Rekor Upload Output', rekor_uuid)
-
         StepImplementer.__print_section_title(f'Step End - {self.step_name}')
 
         return step_result.success
-
-    # def base64_encode(
-    #         file_path
-    # ):
-    #     """Given a file_path, read and encode the contents in base64
-    #     Returns
-    #     -------
-    #     Base64Contents
-    #         base64 encoded string of file contents
-    #     """
-    #
-    #     # Assume the file is text and catch Unicode exception if not
-    #     encoding = None
-    #
-    #     try:
-    #         encoding = Path(file_path).read_text().encode('ascii')
-    #     except UnicodeDecodeError:
-    #         encoding = Path(file_path).read_bytes()
-    #         pass
-    #
-    #     return base64.b64encode(encoding).decode('ascii')
-    #
-    # def create_rekor_entry( self,
-    #     artifact_file_path,
-    #     public_key_path,
-    #     signature_file_path,
-    # ):
-    #     artifact_hash = hashlib.sha256(artifact_file_path.read_bytes()).hexdigest()
-    #     # print(f"Hash is {artifact_hash}")
-    #     base64_encoded_artifact = self.base64_encode(artifact_file_path)
-    #
-    #     rekor_entry = {
-    #         "kind": "rekord",
-    #         "apiVersion": "0.0.1",
-    #         "spec": {
-    #             "signature": {
-    #                 "format": "pgp",
-    #                 "content": self.base64_encode(signature_file_path),
-    #                 "publicKey": {
-    #                     "content": self.base64_encode(public_key_path)
-    #                 }
-    #             },
-    #             "data": {
-    #                 "content": base64_encoded_artifact,
-    #                 "hash": {
-    #                     "algorithm": "sha256",
-    #                     "value": artifact_hash
-    #                 }
-    #             },
-    #             "extraData": base64_encoded_artifact
-    #         }
-    #     }
-    #
-    #     return rekor_entry;
-    #
-    #
-    # def upload_to_rekor(self, artifact_file):
-    #     sig_file = artifact_file + '.asc'
-    #     sig_file_path = Path(sig_file)
-    #     if sig_file_path.exists():
-    #         sig_file_path.unlink()
-    #     gpg = subprocess.run(['gpg',
-    #                           '--armor',
-    #                           '-vv',
-    #                           '-u',
-    #                           'tssc-service-account@redhat.com',
-    #                           '--output',
-    #                           sig_file,
-    #                           '--detach-sign',
-    #                           artifact_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
-    #                          )
-    #     artifact_file_path = Path(os.path.realpath(artifact_file))
-    #     rekor_entry = self.create_rekor_entry(artifact_file_path,'/var/pgp-private-keys/gpg_public_key',sig_file)
-    #     rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
-    #     if rekor_entry_path.exists():
-    #         rekor_entry_path.unlink()
-    #     rekor_entry_path.write_text(json.dumps(rekor_entry))
-    #
-    #     rekor = subprocess.run(['rekor',
-    #                             'upload',
-    #                             '--rekor_server',
-    #                             'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
-    #                             '--entry',
-    #                             rekor_entry_path.absolute()
-    #                             ], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-    #                            universal_newlines=True)
-    #     print("Rekor Entry: " +  json.dumps(rekor_entry, indent = 4))
-    #     if rekor.returncode != 0:
-    #         return rekor.stderr
-    #     return rekor.stdout
 
     def get_value(self, key):
         """Get the value for a given key, either from given configuration or from the result

@@ -9,15 +9,19 @@ Could come from:
   * runtime configuration
   * previous step results
 
-Configuration Key | Required? | Default     | Description
-------------------|-----------|-------------|-----------
+Configuration Key | Required? | Default        | Description
+------------------|-----------|----------------|-----------
+`rekor-server`     | True |         | Version to use when building the container image
 
 Result Artifacts
 ----------------
 Results artifacts output by this step.
 
 Result Artifact Key | Description
---------------------|------------
+--------------------------|------------
+`container-image-version` | Container version to tag built image with
+`image-tar-file`          | Path to the built container image as a tar file
+`image-tar-hash`          | Path to the built container image as a tar file
 """
 
 import os
@@ -28,7 +32,7 @@ import json
 import base64
 import textwrap
 import subprocess
-import hashlib
+# import hashlib
 
 from pathlib import Path
 import sys
@@ -42,11 +46,15 @@ from ploigos_step_runner.utils.dict import deep_merge
 
 
 DEFAULT_CONFIG = {
+    'rekor-server': 'http://rekor.apps.tssc.rht-set.com',
+    'gpg-key': 'var/pgp-private-keys/gpg_public_key',
+    'gpg-user': 'tssc-service-account@redhat.com'
 }
 
 REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS = [
     'rekor-server',
-    'image-tar-file'
+    'gpg-key',
+    'gpg-user'
 ]
 
 
@@ -101,6 +109,13 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         return base64.b64encode(encoding).decode('utf-8')
 
     def get_file_hash(self, file_path):
+        """.
+
+        Returns
+        -------
+        StepResult
+            Object containing the dictionary results of this step.
+        """
         sha_stdout_result = StringIO()
         sha_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
@@ -119,14 +134,20 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         public_key_path,
         extra_data_file
     ):
+        """Creates a rekor entry as a dict object.
+
+        Returns
+        -------
+        StepResult
+            Dict that contains rekor entry for upload with the cli
+        """
         hash = self.get_file_hash(extra_data_file)
-        # hash = hashlib.sha256(json.dumps(extra_data).encode('utf-8')).hexdigest()
-        sig_file = extra_data_file + '.asc'  # os.path.join(self.work_dir_path, 'extra_data.json.asc')
+        sig_file = extra_data_file + '.asc'
         sig_file_path = Path(sig_file)
         if sig_file_path.exists():
             sig_file_path.unlink()
         self.get_gpg_key(sig_file,extra_data_file)
-        base64_encoded_extra_data = self.base64_encode(extra_data_file) # base64.b64encode(json.dumps(extra_data).encode('utf-8')).decode('utf-8')
+        base64_encoded_extra_data = self.base64_encode(extra_data_file)
         rekor_entry = {
             "kind": "rekord",
             "apiVersion": "0.0.1",
@@ -148,21 +169,26 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 "extraData": base64_encoded_extra_data
             }
         }
-
         return rekor_entry;
 
     def get_gpg_key(self, sig_file, extra_data_file):
-        # NOTE: GPG is weird in that it sends "none error" output to stderr even on success...
-        #       so merge the stderr into stdout
+        """Runs the step implemented by this StepImplementer.
+
+        Returns
+        -------
+        StepResult
+            Object containing the dictionary results of this step.
+        """
         gpg_stdout_result = StringIO()
         gpg_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
             gpg_stdout_result
         ])
-        sh.gpg(  # pylint: disable=no-member
+        gpg_user = self.get_value('gpg-user')
+        sh.gpg(
             '--armor',
             '-u',
-            'tssc-service-account@redhat.com',
+            gpg_user,
             '--output',
             sig_file,
             '--detach-sign',
@@ -175,34 +201,40 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         return gpg_stdout_result
 
     def upload_to_rekor(self, rekor_server, extra_data_file):
-        rekor_entry = self.create_rekor_entry('/var/pgp-private-keys/gpg_public_key', extra_data_file)
-        print("Rekor Entry: " + str(rekor_entry))
-        print("Rekor entry type: "+ str(type(rekor_entry)))
+        """Runs the step implemented by this StepImplementer.
+
+        Returns
+        -------
+        StepResult
+            Object containing the dictionary results of this step.
+        """
+        gpg_key = self.get_value('gpg-key')
+        rekor_entry = self.create_rekor_entry(gpg_key, extra_data_file)
+        # print("Rekor Entry: " + str(rekor_entry))
+        # print("Rekor Entry Type: "+ str(type(rekor_entry)))
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
 
         if rekor_entry_path.exists():
             rekor_entry_path.unlink()
         rekor_entry_path_name = os.path.join(self.work_dir_path, 'entry.json')
-        # with open(rekor_entry_path_name, 'w') as fp:
-        #     fp.write(json.dump(rekor_entry))
         rekor_entry_path.write_text(json.dumps(rekor_entry))
         rekor_upload_stdout_result = StringIO()
         rekor_upload_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
             sys.stdout,
             rekor_upload_stdout_result
         ])
-        # print("Rekor Entry: " + json.dumps(rekor_entry, indent=4))
-        sh.rekor(
+        rekor = sh.rekor(
                 'upload',
                 '--rekor_server',
                 rekor_server,
                 '--entry',
                 rekor_entry_path_name,
-                # rekor_entry_path.absolute(),
                 _out=rekor_upload_stdout_callback,
                 _err_to_out=True,
                 _tee='out'
                 )
+        rekor_uuid = str(rekor).split('/')[-1]
+        return rekor_entry, rekor_uuid
 
     def get_all_step_results_dict(self):
         """Get a dictionary of all of the recorded StepResults.
@@ -233,17 +265,22 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
             Object containing the dictionary results of this step.
         """
         step_result = StepResult.from_step_implementer(self)
-        # image_tar_file = self.get_value('image-tar-file')
         rekor_server = self.get_value('rekor-server')
-
         all_workflows = self.get_all_step_results_dict()
         extra_data_file = os.path.join(self.work_dir_path, self.step_name+'.json')
         extra_data_file_path = Path(extra_data_file)
         if extra_data_file_path.exists():
             extra_data_file_path.unlink()
         extra_data_file_path.write_text(json.dumps(all_workflows))
-        rekor_uuid = self.upload_to_rekor(rekor_server, extra_data_file)
-
+        rekor_entry, rekor_uuid = self.upload_to_rekor(rekor_server, extra_data_file)
+        step_result.add_artifact(
+                name='rekor-entry',
+                value=rekor_entry
+        )
+        step_result.add_artifact(
+                name='rekor-uuid',
+                value=rekor_uuid
+        )
         return step_result
 
 
