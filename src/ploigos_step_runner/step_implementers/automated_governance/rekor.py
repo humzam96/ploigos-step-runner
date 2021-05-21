@@ -32,7 +32,7 @@ import json
 import base64
 import textwrap
 import subprocess
-# import hashlib
+import hashlib
 
 from pathlib import Path
 import sys
@@ -109,26 +109,18 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         return base64.b64encode(encoding).decode('utf-8')
 
     def get_file_hash(self, file_path):
-        """.
+        """Returns file hash of given file.
 
         Returns
         -------
         StepResult
             Object containing the dictionary results of this step.
         """
-        sha_stdout_result = StringIO()
-        sha_stdout_callback = create_sh_redirect_to_multiple_streams_fn_callback([
-            sys.stdout,
-            sha_stdout_result
-        ])
-        sha = sh.sha256sum(  # pylint: disable=no-member
-            file_path,
-            _out=sha_stdout_callback,
-            _err_to_out=True,
-            _tee='out'
-        )
-        hash = str(sha).split(' ', 1)[0]
-        return hash
+        hash = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            for byte_block in iter(lambda: hash.read(4096), b""):
+                hash.update(byte_block)
+        return hash.hexdigest()
 
     def create_rekor_entry( self,
         public_key_path,
