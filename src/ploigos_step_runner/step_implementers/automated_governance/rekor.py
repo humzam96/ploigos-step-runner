@@ -116,11 +116,12 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         StepResult
             Object containing the dictionary results of this step.
         """
-        hash = hashlib.sha256()
+        sha256_hash = hashlib.sha256()
         with open(file_path, "rb") as f:
-            for byte_block in iter(lambda: hash.read(4096), b""):
-                hash.update(byte_block)
-        return hash.hexdigest()
+            # Read and update hash string value in blocks of 4K
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
 
     def create_rekor_entry( self,
         public_key_path,

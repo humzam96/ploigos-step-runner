@@ -46,62 +46,26 @@ class TestStepImplementerAutomatedGovernanceRekor(BaseStepImplementerTestCase):
             print('Created entry at: '+rekor_server+'/hash')
         return rekor_side_effect
 
-    def create_sha_side_effect(self, file):
-        sha256_side_effect = hashlib.sha256()
-        with open(file, "rb") as f:
-            # Read and update hash string value in blocks of 4K
-            for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_side_effect.update(byte_block)
-        return sha256_side_effect.hexdigest()
-
-    def test__validate_required_config_or_previous_step_result_artifact_keys_valid(self):
-        step_config = {
-            'rekor-server': 'http://rekor-rekor.apps.cluster-dd7d.dd7d.example.opentlc.com',
+    def test_step_implementer_config_defaults(self):
+        defaults = Rekor.step_implementer_config_defaults()
+        expected_defaults = {
+            'rekor-server': 'http://rekor.apps.tssc.rht-set.com',
+            'gpg-key': '/var/pgp-private-keys/gpg_public_key',
+            'gpg-user': 'tssc-service-account@redhat.com'
         }
+        self.assertEqual(defaults, expected_defaults)
 
-        with TempDirectory() as temp_dir:
-            results_dir_path = os.path.join(temp_dir.path, 'step-runner-results')
-            results_file_name = 'step-runner-results.yml'
-            work_dir_path = os.path.join(temp_dir.path, 'working')
+    def test__required_config_or_result_keys(self):
+        required_keys = Rekor._required_config_or_result_keys()
+        expected_required_keys = [
+            'rekor-server',
+            'gpg-key',
+            'gpg-user'
+        ]
+        self.assertEqual(required_keys, expected_required_keys)
 
-            step_implementer = self.create_step_implementer(
-                step_config=step_config,
-                step_name='test',
-                implementer='OpenSCAP',
-                results_dir_path=results_dir_path,
-                results_file_name=results_file_name,
-                work_dir_path=work_dir_path
-            )
-
-            step_implementer._validate_required_config_or_previous_step_result_artifact_keys()
-
-    def test__validate_required_config_or_previous_step_result_artifact_keys_missing_required_keys(self):
-        step_config = {}
-        with TempDirectory() as temp_dir:
-            results_dir_path = os.path.join(temp_dir.path, 'step-runner-results')
-            results_file_name = 'step-runner-results.yml'
-            work_dir_path = os.path.join(temp_dir.path, 'working')
-            step_implementer = self.create_step_implementer(
-                step_config=step_config,
-                step_name='test',
-                implementer='Rekor',
-                results_dir_path=results_dir_path,
-                results_file_name=results_file_name,
-                work_dir_path=work_dir_path
-            )
-
-            with self.assertRaisesRegex(
-                    AssertionError,
-                    re.compile(
-                        r"Missing required step configuration or previous step result"
-                        r" artifact keys: \['rekor-server'\]"
-                    )
-            ):
-                step_implementer._validate_required_config_or_previous_step_result_artifact_keys()
-
-    @patch('sh.sha256sum', create=True)
     @patch('sh.rekor', create=True)
-    def test_run_step_pass(self, rekor_mock, sha256_mock):
+    def test_run_step_pass(self, rekor_mock):
         with TempDirectory() as temp_dir:
             results_dir_path = os.path.join(temp_dir.path, 'step-runner-results')
             results_file_name = 'step-runner-results.yml'
@@ -131,8 +95,6 @@ class TestStepImplementerAutomatedGovernanceRekor(BaseStepImplementerTestCase):
                 results_file_name=results_file_name,
                 work_dir_path=work_dir_path,
             )
-
-            sha256_mock.side_effect = self.create_sha_side_effect(gpg_key)
 
             expected_step_result = StepResult(
                 step_name='automated_governance',
