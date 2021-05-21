@@ -112,7 +112,6 @@ class Buildah(StepImplementer):
         """
         sh.podman.load('-q', '-i', tar_file)
         buf = StringIO()
-        sh.buildah.load()
         sh.buildah.inspect(tag,_out=buf)
 
         for line in buf.getvalue().split('\n'):
