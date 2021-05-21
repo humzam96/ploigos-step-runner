@@ -226,7 +226,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
                 _err_to_out=True,
                 _tee='out'
                 )
-        rekor_uuid = str(rekor).split('/')[-1]
+        rekor_uuid = str(rekor).split('/')[-1].strip(' \n')
         return rekor_entry, rekor_uuid
 
     def get_all_step_results_dict(self):

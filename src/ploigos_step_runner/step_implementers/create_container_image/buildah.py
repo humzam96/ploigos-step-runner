@@ -101,6 +101,21 @@ class Buildah(StepImplementer):
         """
         return REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS
 
+    def get_file_hash(self, file_path):
+        """Returns file hash of given file.
+
+        Returns
+        -------
+        StepResult
+            Object containing the dictionary results of this step.
+        """
+        sha256_hash = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            # Read and update hash string value in blocks of 4K
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
+
     def _run_step(self):
         """Runs the step implemented by this StepImplementer.
 
@@ -188,7 +203,10 @@ class Buildah(StepImplementer):
             #       vfs is less efficient then fuse (which would require host mounts),
             #       but such is the price we pay for security.
             if os.path.exists(image_tar_path):
+                image_tar_hash = self.get_file_hash(image_tar_path)
                 os.remove(image_tar_path)
+            else:
+                image_tar_hash = "None"
             sh.buildah.push(  # pylint: disable=no-member
                 '--storage-driver=vfs',
                 tag,
@@ -197,12 +215,10 @@ class Buildah(StepImplementer):
                 _err=sys.stderr,
                 _tee='err'
             )
-
             step_result.add_artifact(
                 name='image-tar-file',
                 value=image_tar_path
             )
-            image_tar_hash = hashlib.sha256(Path(image_tar_path).read_bytes()).hexdigest()
             step_result.add_artifact(
                 name='image-tar-hash',
                 value=image_tar_hash

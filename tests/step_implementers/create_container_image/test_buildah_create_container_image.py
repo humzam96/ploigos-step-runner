@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 import sys
@@ -90,6 +91,8 @@ class TestStepImplementerCreateContainerImageBuildah(BaseStepImplementerTestCase
 
             self.setup_previous_result(work_dir_path, artifact_config)
 
+            # image_tar_hash = hashlib.sha256(Path(work_dir_path + '/create-container-image/image-app-name-service-name-1.0-123abc.tar').read_bytes()).hexdigest()
+
             result = step_implementer._run_step()
 
             expected_step_result = StepResult(
@@ -104,6 +107,10 @@ class TestStepImplementerCreateContainerImageBuildah(BaseStepImplementerTestCase
             expected_step_result.add_artifact(
                 name='image-tar-file',
                 value=work_dir_path + '/create-container-image/image-app-name-service-name-1.0-123abc.tar'
+            )
+            expected_step_result.add_artifact(
+                name='image-tar-hash',
+                value='None'
             )
 
 
@@ -172,6 +179,10 @@ class TestStepImplementerCreateContainerImageBuildah(BaseStepImplementerTestCase
                 name='image-tar-file',
                 value=work_dir_path + '/create-container-image/image-app-name-service-name-latest.tar'
             )
+            expected_step_result.add_artifact(
+                name='image-tar-hash',
+                value='None'
+            )
 
             buildah_mock.bud.assert_called_once_with(
                 '--storage-driver=vfs',
@@ -230,6 +241,7 @@ class TestStepImplementerCreateContainerImageBuildah(BaseStepImplementerTestCase
             }
 
             self.setup_previous_result(work_dir_path, artifact_config)
+            image_tar_hash = hashlib.sha256(Path(work_dir_path + '/create-container-image/image-app-name-service-name-1.0-123abc.tar').read_bytes()).hexdigest()
 
             result = step_implementer._run_step()
 
@@ -245,6 +257,10 @@ class TestStepImplementerCreateContainerImageBuildah(BaseStepImplementerTestCase
             expected_step_result.add_artifact(
                 name='image-tar-file',
                 value=work_dir_path + '/create-container-image/image-app-name-service-name-1.0-123abc.tar'
+            )
+            expected_step_result.add_artifact(
+                name='image-tar-hash',
+                value=image_tar_hash
             )
 
 
