@@ -91,6 +91,7 @@ Examples
 """
 import os
 import sys
+
 import sh
 from ploigos_step_runner import StepResult
 from ploigos_step_runner.step_implementers.shared.maven_generic import MavenGeneric
