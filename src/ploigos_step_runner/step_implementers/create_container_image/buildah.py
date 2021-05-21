@@ -203,10 +203,7 @@ class Buildah(StepImplementer):
             #       vfs is less efficient then fuse (which would require host mounts),
             #       but such is the price we pay for security.
             if os.path.exists(image_tar_path):
-                image_tar_hash = self.get_file_hash(image_tar_path)
                 os.remove(image_tar_path)
-            else:
-                image_tar_hash = "None"
             sh.buildah.push(  # pylint: disable=no-member
                 '--storage-driver=vfs',
                 tag,
@@ -215,6 +212,7 @@ class Buildah(StepImplementer):
                 _err=sys.stderr,
                 _tee='err'
             )
+            image_tar_hash = self.get_file_hash(image_tar_path)
             step_result.add_artifact(
                 name='image-tar-file',
                 value=image_tar_path
