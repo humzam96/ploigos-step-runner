@@ -102,7 +102,7 @@ class Buildah(StepImplementer):
         """
         return REQUIRED_CONFIG_OR_PREVIOUS_STEP_RESULT_ARTIFACT_KEYS
 
-    def get_file_hash(self, tag, tar_file):
+    def get_file_hash(self, application_name, service_name, tar_file):
         """Returns file hash of given file.
 
         Returns
@@ -112,7 +112,8 @@ class Buildah(StepImplementer):
         """
         sh.podman.load('-q', '-i', tar_file)
         buf = StringIO()
-        sh.buildah.inspect(tag,_out=buf)
+        image_name = application_name + '/' + service_name
+        sh.buildah.inspect(image_name,_out=buf)
 
         for line in buf.getvalue().split('\n'):
             if 'FromImageDigest' in line:
@@ -222,7 +223,7 @@ class Buildah(StepImplementer):
                 _err=sys.stderr,
                 _tee='err'
             )
-            image_tar_hash = self.get_file_hash(tag, image_tar_path)
+            image_tar_hash = self.get_file_hash(application_name, service_name, image_tar_path)
             step_result.add_artifact(
                 name='image-tar-file',
                 value=image_tar_path
