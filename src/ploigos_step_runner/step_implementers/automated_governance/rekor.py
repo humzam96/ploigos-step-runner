@@ -203,7 +203,7 @@ class Rekor(StepImplementer):  # pylint: disable=too-few-public-methods
         """
         gpg_key = self.get_value('gpg-key')
         rekor_entry = self.create_rekor_entry(gpg_key, extra_data_file)
-        # print("Rekor Entry: " + str(rekor_entry))
+        print("Rekor Entry: " + str(rekor_entry))
         # print("Rekor Entry Type: "+ str(type(rekor_entry)))
         rekor_entry_path = Path(os.path.join(self.work_dir_path, 'entry.json'))
 
