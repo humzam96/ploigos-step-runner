@@ -110,12 +110,14 @@ class Buildah(StepImplementer):
         StepResult
             Object containing the dictionary results of this step.
         """
-        sh.podman.load('-q', '-i', tar_file)
+        pod = StringIO()
+        sh.podman.load('-q', '-i', tar_file, _out=pod)
+        image_name = pod.getvalue().rsplit(' ')[-1]
         buf = StringIO()
-        image_name = application_name + '/' + service_name
+        # image_name = application_name + '/' + service_name
         sh.buildah.inspect(image_name,_out=buf)
 
-        for line in buf.getvalue().split('\n'):
+        for line in buf.getvalue().rsplit('\n'):
             if 'FromImageDigest' in line:
                 hash = line.split(':')[-1].strip(' ,\"\n')
                 return hash
