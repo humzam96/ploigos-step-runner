@@ -112,8 +112,7 @@ class Buildah(StepImplementer):
         """
         pod = StringIO()
         sh.podman.load('-q', '-i', tar_file, _out=pod)
-        image_name = pod.getvalue().rstrip()
-        print (image_name)
+        image_name = pod.getvalue().rstrip().strip(' @')
         buf = StringIO()
         # image_name = application_name + '/' + service_name
         sh.buildah.inspect(image_name,_out=buf)
@@ -121,7 +120,7 @@ class Buildah(StepImplementer):
         for line in buf.getvalue().rsplit('\n'):
             if 'FromImageDigest' in line:
                 hash = line.split(':')[-1].strip(' ,\"\n')
-                sh.podman.rm(image_name)
+                sh.podman.rmi(image_name)
                 return hash
 
         # sha256_hash = hashlib.sha256()
