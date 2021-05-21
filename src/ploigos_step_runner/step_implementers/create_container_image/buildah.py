@@ -112,7 +112,7 @@ class Buildah(StepImplementer):
         """
         pod = StringIO()
         sh.podman.load('-q', '-i', tar_file, _out=pod)
-        image_name = pod.getvalue().rstrip().strip(' @')
+        image_name = pod.getvalue().rstrip().split('@')[-1]
         buf = StringIO()
         # image_name = application_name + '/' + service_name
         sh.buildah.inspect(image_name,_out=buf)
