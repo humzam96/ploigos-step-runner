@@ -223,7 +223,7 @@ class Buildah(StepImplementer):
                 _err=sys.stderr,
                 _tee='err'
             )
-            image_tar_hash = self.get_file_hash(tag)
+            image_tar_hash = self.get_file_hash(tag, image_tar_path)
             step_result.add_artifact(
                 name='image-tar-file',
                 value=image_tar_path
