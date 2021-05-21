@@ -91,7 +91,6 @@ Examples
 """
 import os
 import sys
-import subprocess
 import sh
 from ploigos_step_runner import StepResult
 from ploigos_step_runner.step_implementers.shared.maven_generic import MavenGeneric
@@ -258,33 +257,5 @@ class Maven(MavenGeneric):
            name='package-artifacts',
            value=[package_artifacts]
         )
-        # tar_file = os.path.join(self.work_dir_path_step, 'maven.tar')
-        # sig_file = os.path.join(self.work_dir_path_step, 'maven.tar.asc')
-        # tar = subprocess.run(['tar', '-cvf', tar_file, os.path.join(
-        #         os.path.dirname(os.path.abspath(pom_file)),
-        #         artifact_parent_dir)],
-        #                      stdout=subprocess.PIPE, universal_newlines=True)
-        # gpg = subprocess.run(['gpg',
-        #                       '--output',
-        #                       sig_file,
-        #                       '--detach-sign',
-        #                       tar_file], stdout=subprocess.PIPE, universal_newlines=True
-        #                      )
-        # rekor = subprocess.run(['rekor',
-        #                         'upload',
-        #                         '--rekor_server',
-        #                         'http://rekor.apps.cluster-e9b6.e9b6.example.opentlc.com',
-        #                         '--signature',
-        #                         sig_file,
-        #                         '--public-key',
-        #                         '/var/pgp-private-keys/gpg_public_key',
-        #                         '--artifact',
-        #                         tar_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        #                        universal_newlines=True)
-        # print(tar)
-        # print(tar.stdout)
-        # print(gpg)
-        # print(rekor)
-        # print(rekor.stdout)
 
         return step_result
