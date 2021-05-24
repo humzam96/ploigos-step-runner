@@ -115,7 +115,7 @@ class Buildah(StepImplementer):
         image_name = pod.getvalue().rstrip().split('@')[-1]
         buf = StringIO()
         # image_name = application_name + '/' + service_name
-        sh.buildah.inspect(image_name,_out=buf)
+        sh.podman.inspect(image_name,_out=buf)
 
         for line in buf.getvalue().rsplit('\n'):
             if 'FromImageDigest' in line:
@@ -226,6 +226,7 @@ class Buildah(StepImplementer):
                 _err=sys.stderr,
                 _tee='err'
             )
+            sleep(600)
             image_tar_hash = self.get_file_hash(application_name, service_name, image_tar_path)
             step_result.add_artifact(
                 name='image-tar-file',
