@@ -191,10 +191,9 @@ class SonarQube(StepImplementer):
         password = None
         if self.has_config_value(AUTHENTICATION_CONFIG):
             if (self.get_value('username')):
-		username = self.get_value('username')
-                   
+		username = self.get_value('username')    
 	    if (self.get_value('password')):
-                password = self.get_value('password')
+		password = self.get_value('password')
 
         application_name = self.get_value('application-name')
         service_name = self.get_value('service-name')
