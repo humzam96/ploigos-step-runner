@@ -163,18 +163,18 @@ class SonarQube(StepImplementer):
         super()._validate_required_config_or_previous_step_result_artifact_keys()
 
         # ensure either both git-username and git-password are set or neither
-        runtime_auth_config = {}
-        for auth_config_key in AUTHENTICATION_CONFIG:
-            runtime_auth_config_value = self.get_value(auth_config_key)
+#        runtime_auth_config = {}
+#        /*for auth_config_key in AUTHENTICATION_CONFIG:
+ #           runtime_auth_config_value = self.get_value(auth_config_key)
 
-            if runtime_auth_config_value is not None:
-                runtime_auth_config[auth_config_key] = runtime_auth_config_value
+ #           if runtime_auth_config_value is not None:
+#                runtime_auth_config[auth_config_key] = runtime_auth_config_value
 
-        if (any(element in runtime_auth_config for element in AUTHENTICATION_CONFIG)) and \
-                (not all(element in runtime_auth_config for element in AUTHENTICATION_CONFIG)):
-            raise StepRunnerException(
-                "Either 'username' or 'password 'is not set. Neither or both must be set."
-            )
+#        if (any(element in runtime_auth_config for element in AUTHENTICATION_CONFIG)) and \
+#                (not all(element in runtime_auth_config for element in AUTHENTICATION_CONFIG)):
+#            raise StepRunnerException(
+#                "Either 'username' or 'password 'is not set. Neither or both must be set."
+#            )
 
     def _run_step(self):
         """Runs the step implemented by this StepImplementer.
